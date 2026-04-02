@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Online Scientific Scanner</title>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4"></script>
+
+<style>
+body {
+  background: linear-gradient(135deg, #020617, #0f172a);
+  font-family: 'Segoe UI';
+  color: white;
+  text-align: center;
+  padding: 40px;
+}
+
+/* CARD */
+.card {
+  background: #0f172a;
+  padding: 30px;
+  border-radius: 20px;
+  width: 380px;
+  margin: auto;
+  box-shadow: 0 0 25px #38bdf8;
+}
+
+/* INPUT */
+input {
+  width: 90%;
+  padding: 12px;
+  margin: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+}
+
+/* BUTTON */
+button {
+  padding: 10px 20px;
+  margin: 10px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(45deg, #38bdf8, #22c55e);
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+}
+
+/* RESULT */
+.result {
+  margin-top: 20px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.yes { color: #22c55e; }
+.no { color: #ef4444; }
+
+/* FOOTER */
+.footer {
+  margin-top: 40px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🔬 Online Scientific Scanner</h1>
+<p>✨ Please enter or scan a number to check if it is in scientific notation</p>
+
+<div class="card">
+
+  <input type="text" id="inputNumber" placeholder="Example: -3.1 x 10^-3">
+
+  <input type="file" id="imageInput">
+
+  <br>
+
+  <button onclick="checkInput()">Check 🔍</button>
+  <button onclick="scanImage()">Scan 📷</button>
+
+  <div class="result" id="result">Result: -</div>
+
+</div>
+
+<div class="footer">
+  Created by <b>Brenda Suwuh</b> | NIM 241011060050 <br>
+  For Automata Assignment 🎓
+</div>
+
+<script>
+
+// CHECK SCIENTIFIC
+function isScientific(input) {
+  let pattern = /^-?\d+(\.\d+)?\s?(x|X|\*)\s?10\^[-+]?\d+$|^-?\d+(\.\d+)?e[-+]?\d+$/;
+  return pattern.test(input);
+}
+
+// MANUAL INPUT
+function checkInput() {
+  let input = document.getElementById("inputNumber").value.trim();
+  showResult(input);
+}
+
+// SCAN IMAGE
+async function scanImage() {
+  const file = document.getElementById('imageInput').files[0];
+  if (!file) return alert("Please upload an image first!");
+
+  document.getElementById("result").innerText = "Scanning... ⏳";
+
+  const { data: { text } } = await Tesseract.recognize(file, 'eng');
+
+  let cleaned = text.replace(/[^0-9eE\-\+\.\^xX]/g, '');
+  showResult(cleaned);
+}
+
+// SHOW RESULT
+function showResult(input) {
+  let result = document.getElementById("result");
+
+  if (isScientific(input)) {
+    result.innerHTML = "<span class='yes'>YES ✅ - Scientific Number</span>";
+  } else {
+    result.innerHTML = "<span class='no'>NO ❌ - Not Scientific Number</span>";
+  }
+}
+
+</script>
+
+</body>
+</html>
